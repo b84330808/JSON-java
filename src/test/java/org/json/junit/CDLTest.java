@@ -196,6 +196,33 @@ public class CDLTest {
     }
 
     /**
+     * Windows line breaks ("\r\n") must not add an empty row after each row #320
+     */
+    @Test
+    public void csvParsingWindowsLineBreaks(){
+        String data = "Field 1,Field 2,Field 3\r\n" +
+                "value11,value12,value13\r\n" +
+                "value21,\"value22\",\r\n";
+
+        JSONArray jsonArray = CDL.toJSONArray(data);
+
+        JSONArray expectedJsonArray = new JSONArray();
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("Field 1", "value11");
+        jsonObject.put("Field 2", "value12");
+        jsonObject.put("Field 3", "value13");
+        expectedJsonArray.put(jsonObject);
+
+        jsonObject = new JSONObject();
+        jsonObject.put("Field 1", "value21");
+        jsonObject.put("Field 2", "value22");
+        jsonObject.put("Field 3", "");
+        expectedJsonArray.put(jsonObject);
+
+        Util.compareActualVsExpectedJsonArrays(jsonArray, expectedJsonArray);
+    }
+
+    /**
      * Assert that there is no error for a single escaped quote within a properly embedded quote.
      */
     @Test

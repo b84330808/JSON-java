@@ -117,6 +117,14 @@ public class CDL {
                 }
                 if (c != ' ') {
                     if (c == '\n' || c == '\r' || c == 0) {
+                        if (c == '\r') {
+                            // Consume the '\n' of a "\r\n" line break, so it
+                            // does not start an extra empty row.
+                            char nextC = x.next();
+                            if (nextC != '\n' && nextC > 0) {
+                                x.back();
+                            }
+                        }
                         return ja;
                     }
                     throw x.syntaxError("Bad character '" + c + "' (" +
